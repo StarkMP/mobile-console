@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "strict": true,
+    "noEmit": true,
+    "typeRoots": ["./node_modules/@types"],
+    "baseUrl": ".",
+    "declaration": true,
+    "declarationDir": "dist"
+  },
+  "exclude": ["node_modules", "__tests__", "dist"],
+  "include": ["./src/**/*", "./src/**/*.json", "./tailwind.config.js", "./postcss.config.js"]
+}
