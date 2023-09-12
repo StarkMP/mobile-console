@@ -1,37 +1,27 @@
-const HTMLWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const path = require('path');
+/* eslint-disable @typescript-eslint/no-var-requires */
+const HTMLWebpackPlugin = require("html-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const path = require("path");
+const webpackCommonConfig = require("./webpack.common");
 
 module.exports = {
-  resolve: {
-    extensions: ['.ts', '.json'],
-  },
-  module: {
-    rules: [
-      {
-        test: /\.(js|jsx|tsx|ts)$/,
-        exclude: /node_modules/,
-        use: 'babel-loader',
-      },
-    ],
-  },
-  devtool: 'source-map',
-  context: path.resolve(__dirname, '../src'),
+  ...webpackCommonConfig,
+  devtool: "source-map",
   entry: {
-    bundle: './index.ts',
+    bundle: "./example/index.ts",
   },
   output: {
-    filename: '[name].[contenthash:8].js',
-    path: path.resolve(__dirname, '../dist'),
+    filename: "[name].[contenthash:8].js",
+    path: path.resolve(__dirname, "../dist"),
   },
   plugins: [
     new HTMLWebpackPlugin({
-      template: path.resolve(__dirname, '../example/index.html'),
+      template: path.resolve(__dirname, "../example/index.html"),
     }),
     new CleanWebpackPlugin(),
   ],
   devServer: {
-    contentBase: path.join(__dirname, '../dist'),
+    contentBase: path.join(__dirname, "../dist"),
     compress: true,
     port: 3030,
     watchContentBase: true,

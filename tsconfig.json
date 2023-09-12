@@ -16,8 +16,16 @@
     "typeRoots": ["./node_modules/@types"],
     "baseUrl": ".",
     "declaration": true,
-    "declarationDir": "dist"
+    "declarationDir": "dist",
+    "paths": {
+      "@core/*": ["./src/core/*"],
+      "@core": ["./src/core"],
+      "@templates/*": ["./src/templates/*"],
+      "@templates": ["./src/templates"],
+      "@typings/*": ["./src/typings/*"],
+      "@typings": ["./src/typings"]
+    }
   },
   "exclude": ["node_modules", "__tests__", "dist"],
-  "include": ["./src/**/*", "./src/**/*.json", "./tailwind.config.js", "./postcss.config.js"]
+  "include": ["./src/**/*", "./src/**/*.json", "./example/**/*", "./tailwind.config.js", "./postcss.config.js", "./tools/**/*.js"]
 }
