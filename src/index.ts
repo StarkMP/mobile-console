@@ -1,1 +1,3 @@
-console.log(123);
+import "./styles.css";
+
+export { initMobileConsoleWidget } from "@core/widget";
