@@ -10,11 +10,9 @@ const consoleTypeClassname: { [key in ConsoleType]: string } = {
 };
 
 export const ConsoleRaw = createTemplate<ConsoleRawProps>(() => {
-  return {
-    html: ({ type, content }): string => `
-      <div class="text-xs px-2 py-1 ${consoleTypeClassname[type]} border-b">
-        ${content.replace("\n", "<br>&nbsp;&nbsp;")}
-      </div>
-    `,
-  };
+  return ({ type, content }): string => `
+    <div class="text-xs px-2 py-1 ${consoleTypeClassname[type]} border-b">
+      ${content.replace("\n", "<br>&nbsp;&nbsp;")}
+    </div>
+  `;
 });
