@@ -1,16 +1,19 @@
 import { createTemplate } from "@core/template";
-import { injectEvent, injectNest } from "@core/template/injectable";
+import { injectEvent, injectNest, injectRef } from "@core/template/injectable";
 import { ConsoleRaw } from "@templates";
-import { ConsoleType } from "@typings/core/console";
+import { ConsoleObserver, ConsoleType } from "@typings/core/console";
 
 type ConsoleProps = {
   show: boolean;
+  observer: ConsoleObserver;
   onClose: () => void;
 };
 
 export const Console = createTemplate<ConsoleProps>(
-  ({ initialProps, addNest, addEvent, onMount }) => {
-    const { onClose } = initialProps;
+  ({ initialProps, addNest, addEvent, addRef, onMount, onUpdate }) => {
+    const { observer, onClose } = initialProps;
+
+    const scrollAreaRef = addRef();
 
     const handleClick = addEvent("click", onClose);
 
@@ -18,6 +21,14 @@ export const Console = createTemplate<ConsoleProps>(
       ConsoleRaw({ type: ConsoleType.Error, content: "First error" }),
       ConsoleRaw({ type: ConsoleType.Info, content: "Second info" }),
     ]);
+
+    const scrollToBottom = (): void => {
+      const scrollElement = scrollAreaRef.element;
+
+      if (scrollElement) {
+        scrollElement.scrollTop = scrollElement.scrollHeight;
+      }
+    };
 
     onMount(() => {
       const handleError = (e: ErrorEvent): boolean => {
@@ -28,13 +39,26 @@ export const Console = createTemplate<ConsoleProps>(
 
       window.addEventListener("error", handleError);
 
+      observer.subscribe((data) => {
+        list.add(ConsoleRaw(data));
+        scrollToBottom();
+      });
+
       return (): void => {
         window.removeEventListener("error", handleError);
       };
     });
 
+    onUpdate((nextProps) => {
+      if (nextProps.show === true) {
+        scrollToBottom();
+      }
+    });
+
     return ({ show }): string => `
-      <div class="${!show ? "hidden " : ""}fixed z-50 left-0 top-0 w-screen h-screen bg-white">
+      <div class="${
+        !show ? "hidden " : ""
+      }fixed z-50 left-0 top-0 w-screen h-screen bg-white flex flex-col font-[monospace]">
         <div class="w-full h-12 flex items-center justify-between bg-gray-100 px-4 text-gray-800 border-b border-gray-300">
           <span class="font-medium">Mobile Console</span>
           <button ${injectEvent(handleClick)} class="w-6 h-6">
@@ -43,7 +67,11 @@ export const Console = createTemplate<ConsoleProps>(
             </svg>
           </button>
         </div>
-        <div class="w-full h-full flex flex-col">${injectNest(list)}</div>
+        <div ${injectRef(
+          scrollAreaRef
+        )} class="w-full h-full flex flex-col overflow-auto [overflow-anchor:none]">${injectNest(
+      list
+    )}</div>
       </div>
     `;
   }

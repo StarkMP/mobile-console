@@ -6,6 +6,7 @@ import {
   TemplateInstance,
   TemplateOnMount,
   TemplateOnUnmount,
+  TemplateOnUpdate,
 } from "@typings/core/template";
 import {
   InjectableParams,
@@ -27,6 +28,7 @@ export const createTemplate =
 
     let onMountCallback: (() => void) | (() => () => void) | undefined;
     let onUnmountCallback: (() => void) | undefined;
+    let onUpdateCallback: (nextProps: T, prevProps: T) => void;
 
     const addRef = (): TemplateInjectableReference => {
       const refId = uuidv4();
@@ -81,9 +83,18 @@ export const createTemplate =
       onMountCallback = fn;
     };
 
-    const renderStringHTML = callback({ initialProps, addRef, addEvent, addNest, onMount });
+    const onUpdate: TemplateOnUpdate<T> = (fn) => {
+      onUpdateCallback = fn;
+    };
 
-    console.warn(renderStringHTML(initialProps).trim());
+    const renderStringHTML = callback({
+      initialProps,
+      addRef,
+      addEvent,
+      addNest,
+      onMount,
+      onUpdate,
+    });
 
     const element = createHTMLElementFromString({
       id,
@@ -94,7 +105,8 @@ export const createTemplate =
     });
 
     const update = (updatedProps: Partial<T>): void => {
-      const nextProps = { ...ctx.props, ...updatedProps };
+      const prevProps = Object.assign({}, ctx.props);
+      const nextProps = { ...prevProps, ...updatedProps };
       const updatedElement = createHTMLElementFromString({
         id,
         html: renderStringHTML(nextProps),
@@ -107,6 +119,8 @@ export const createTemplate =
 
       ctx.props = nextProps;
       ctx.element = updatedElement;
+
+      onUpdateCallback(nextProps, prevProps);
     };
 
     const ctx: TemplateContext<T> = {

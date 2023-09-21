@@ -30,11 +30,14 @@ export type TemplateCallback<T extends { [key: string]: unknown } = {}> = (param
   addEvent: (name: string, fn: () => void) => TemplateInjectableEvent;
   addNest: (templates: TemplateInstance<{ [key: string]: any }>[]) => TemplateInjectableNest;
   onMount: TemplateOnMount;
+  onUpdate: TemplateOnUpdate<T>;
 }) => (props: T) => TemplateHTML;
 
 export type TemplateHTML = string;
 
 export type TemplateOnMount = (fn: () => TemplateOnUnmount | void) => void;
+
+export type TemplateOnUpdate<T> = (fn: (nextProps: T, prevProps: T) => void) => void;
 
 export type TemplateOnUnmount = () => void;
 
