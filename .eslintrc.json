@@ -32,7 +32,7 @@
     "@typescript-eslint/ban-types": 0,
     "@typescript-eslint/no-floating-promises": 0,
     "no-undef": 1,
-    "no-console": 1,
+    "no-console": 0,
     "newline-before-return": 2,
     "indent": 0,
     "linebreak-style": 0,
