@@ -7,6 +7,7 @@ import {
   TemplateOnMount,
   TemplateOnUnmount,
   TemplateOnUpdate,
+  TemplateUpdateOption,
 } from "@typings/core/template";
 import {
   InjectableParams,
@@ -14,6 +15,7 @@ import {
   TemplateInjectableNest,
   TemplateInjectableReference,
 } from "@typings/core/template/injectable";
+import { AnyObject } from "@typings/util-types";
 import { v4 as uuidv4 } from "uuid";
 
 import { checkByInjectableParams } from "./injectable";
@@ -48,20 +50,23 @@ export const createTemplate =
       return eventObj;
     };
 
-    const addNest = (
-      templates: TemplateInstance<{ [key: string]: any }>[] = []
-    ): TemplateInjectableNest => {
+    const addNest = (templates: TemplateInstance<AnyObject>[] = []): TemplateInjectableNest => {
       const nestId = uuidv4();
 
       const nest: TemplateInjectableNest = {
         id: nestId,
         templates,
 
-        list: (): TemplateContext<{ [key: string]: any }>[] =>
-          nest.templates.map((item) => item.context()),
+        list: (): TemplateContext<AnyObject>[] => nest.templates.map((item) => item.context()),
 
-        add: (template: TemplateInstance<{ [key: string]: any }>): void => {
+        add: (template: TemplateInstance<AnyObject>): void => {
           nest.templates.push(template);
+
+          if (nest.templates.length === 0) {
+            ctx.update({}, true);
+
+            return;
+          }
 
           const list = nest.list();
           const lastLoadedElement = list[list.length - 2].element;
@@ -104,7 +109,7 @@ export const createTemplate =
       nests,
     });
 
-    const update = (updatedProps: Partial<T>): void => {
+    const update: TemplateUpdateOption<T> = (updatedProps = {}, isQuiet): void => {
       const prevProps = Object.assign({}, ctx.props);
       const nextProps = { ...prevProps, ...updatedProps };
       const updatedElement = createHTMLElementFromString({
@@ -119,6 +124,10 @@ export const createTemplate =
 
       ctx.props = nextProps;
       ctx.element = updatedElement;
+
+      if (isQuiet) {
+        return;
+      }
 
       onUpdateCallback(nextProps, prevProps);
     };

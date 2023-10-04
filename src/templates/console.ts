@@ -14,13 +14,8 @@ export const Console = createTemplate<ConsoleProps>(
     const { observer, onClose } = initialProps;
 
     const scrollAreaRef = addRef();
-
     const handleClick = addEvent("click", onClose);
-
-    const list = addNest([
-      ConsoleRaw({ type: ConsoleType.Error, content: "First error" }),
-      ConsoleRaw({ type: ConsoleType.Info, content: "Second info" }),
-    ]);
+    const list = addNest();
 
     const scrollToBottom = (): void => {
       const scrollElement = scrollAreaRef.element;
@@ -32,7 +27,12 @@ export const Console = createTemplate<ConsoleProps>(
 
     onMount(() => {
       const handleError = (e: ErrorEvent): boolean => {
-        list.add(ConsoleRaw({ type: ConsoleType.Error, content: e.error.stack }));
+        list.add(
+          ConsoleRaw({
+            type: ConsoleType.Error,
+            content: e.error.stack.replace("\n", "<br>&nbsp;"),
+          })
+        );
 
         return false;
       };

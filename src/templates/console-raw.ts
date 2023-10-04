@@ -38,7 +38,7 @@ export const ConsoleRaw = createTemplate<ConsoleRawProps>(() => {
             : ""
         }
         <div>
-          ${content.replace("\n", "<br>&nbsp;&nbsp;")}
+          ${content}
         </div>
       </div>
     `;

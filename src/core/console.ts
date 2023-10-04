@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { ConsoleObserver, ConsoleType } from "@typings/core/console";
 
 export const initConsoleObserver = (): ConsoleObserver => {

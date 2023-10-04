@@ -1,3 +1,5 @@
+import { AnyObject } from "@typings/util-types";
+
 import { TemplateContext, TemplateInstance } from ".";
 
 export type TemplateInjectableDefaultParams = {
@@ -15,9 +17,9 @@ export type TemplateInjectableEvent = TemplateInjectableDefaultParams & {
 };
 
 export type TemplateInjectableNest = TemplateInjectableDefaultParams & {
-  templates: TemplateInstance<{ [key: string]: any }>[];
-  list: () => TemplateContext<{ [key: string]: any }>[];
-  add: (template: TemplateInstance<{ [key: string]: any }>) => void;
+  templates: TemplateInstance<AnyObject>[];
+  list: () => TemplateContext<AnyObject>[];
+  add: (template: TemplateInstance<AnyObject>) => void;
   // remove: (uuid: string) => void;
   // clear: () => void;
   // sort: () => void;

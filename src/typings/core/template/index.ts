@@ -1,3 +1,5 @@
+import { AnyObject } from "@typings/util-types";
+
 import {
   TemplateInjectableEvent,
   TemplateInjectableNest,
@@ -21,14 +23,14 @@ export type TemplateContext<T> = {
   update: TemplateUpdateOption<T>;
 };
 
-export type TemplateUpdateOption<T> = (props: Partial<T>) => void;
+export type TemplateUpdateOption<T> = (updatedProps?: Partial<T>, isQuiet?: boolean) => void;
 
 export type TemplateCallback<T extends { [key: string]: unknown } = {}> = (params: {
   initialProps: T;
   // context: () => TemplateContext<T>;
   addRef: () => TemplateInjectableReference;
   addEvent: (name: string, fn: () => void) => TemplateInjectableEvent;
-  addNest: (templates: TemplateInstance<{ [key: string]: any }>[]) => TemplateInjectableNest;
+  addNest: (templates?: TemplateInstance<AnyObject>[]) => TemplateInjectableNest;
   onMount: TemplateOnMount;
   onUpdate: TemplateOnUpdate<T>;
 }) => (props: T) => TemplateHTML;
