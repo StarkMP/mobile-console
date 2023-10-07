@@ -20,6 +20,7 @@ export type TemplateInjectableNest = TemplateInjectableDefaultParams & {
   templates: TemplateInstance<AnyObject>[];
   list: () => TemplateContext<AnyObject>[];
   add: (template: TemplateInstance<AnyObject>) => void;
+  destroy: () => void;
   // remove: (uuid: string) => void;
   // clear: () => void;
   // sort: () => void;

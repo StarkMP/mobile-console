@@ -79,6 +79,17 @@ export const createTemplate =
           ctx.update({}, true);
         },
 
+        destroy: (): void => {
+          for (const template of nest.templates) {
+            template.remove();
+          }
+
+          nests.splice(
+            nests.findIndex((item) => item.id === nest.id),
+            1
+          );
+        },
+
         // remove: (uuid: string): void => {},
         // clear: (): void => {},
         // sort: (): void => {},
@@ -151,6 +162,14 @@ export const createTemplate =
     const remove = (): void => {
       if (onUnmountCallback) {
         onUnmountCallback();
+      }
+
+      for (const event of events) {
+        event.element?.removeEventListener(event.name, event.fn);
+      }
+
+      for (const nest of nests) {
+        nest.destroy();
       }
 
       ctx.element.remove();
