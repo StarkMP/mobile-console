@@ -60,18 +60,23 @@ export const createTemplate =
         list: (): TemplateContext<AnyObject>[] => nest.templates.map((item) => item.context()),
 
         add: (template: TemplateInstance<AnyObject>): void => {
+          const templatesArrayLength = nest.templates.length;
+
           nest.templates.push(template);
 
-          if (nest.templates.length === 0) {
-            ctx.update({}, true);
+          // !optimization
+          // add child without template update if we already have mounted child elements
+          // of this nest in the DOM
+          if (templatesArrayLength > 0) {
+            const list = nest.list();
+            const lastLoadedElement = list[list.length - 2].element;
+
+            lastLoadedElement.insertAdjacentElement("afterend", template.context().element);
 
             return;
           }
 
-          const list = nest.list();
-          const lastLoadedElement = list[list.length - 2].element;
-
-          lastLoadedElement.insertAdjacentElement("afterend", template.context().element);
+          ctx.update({}, true);
         },
 
         // remove: (uuid: string): void => {},
