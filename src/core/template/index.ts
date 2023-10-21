@@ -34,7 +34,7 @@ export const createTemplate =
 
     const addRef = (): TemplateInjectableReference => {
       const refId = uuidv4();
-      const refObj = { id: refId, element: null };
+      const refObj = { id: refId, mounted: false, element: null };
 
       references.push(refObj);
 
@@ -43,7 +43,7 @@ export const createTemplate =
 
     const addEvent = (name: string, fn: () => void): TemplateInjectableEvent => {
       const eventId = uuidv4();
-      const eventObj = { id: eventId, element, name, fn };
+      const eventObj = { id: eventId, mounted: false, element, name, fn };
 
       events.push(eventObj);
 
@@ -55,6 +55,7 @@ export const createTemplate =
 
       const nest: TemplateInjectableNest = {
         id: nestId,
+        mounted: false,
         templates,
 
         list: (): TemplateContext<AnyObject>[] => nest.templates.map((item) => item.context()),
@@ -128,6 +129,20 @@ export const createTemplate =
     const update: TemplateUpdateOption<T> = (updatedProps = {}, isQuiet): void => {
       const prevProps = Object.assign({}, ctx.props);
       const nextProps = { ...prevProps, ...updatedProps };
+
+      // unmount all injectable instances
+      for (const event of events) {
+        event.mounted = false;
+      }
+
+      for (const reference of references) {
+        reference.mounted = false;
+      }
+
+      for (const nest of nests) {
+        nest.mounted = false;
+      }
+
       const updatedElement = createHTMLElementFromString({
         id,
         html: renderStringHTML(nextProps),

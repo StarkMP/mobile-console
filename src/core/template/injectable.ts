@@ -19,13 +19,15 @@ const checkByInjectableReference = (
     return;
   }
 
-  (
-    references.find(
-      (ref) => ref.id === element.getAttribute(REF_ATTRIBUTE)
-    ) as TemplateInjectableReference
-  ).element = element;
+  const reference = references.find(
+    (ref) => ref.id === element.getAttribute(REF_ATTRIBUTE)
+  ) as TemplateInjectableReference;
+
+  reference.element = element;
 
   element.removeAttribute(REF_ATTRIBUTE);
+
+  reference.mounted = true;
 };
 
 export const injectEvent = (event: TemplateInjectableEvent | TemplateInjectableEvent[]): string => {
@@ -49,6 +51,7 @@ const checkByInjectableEvents = (element: HTMLElement, events: TemplateInjectabl
     element.addEventListener(event.name, event.fn);
 
     event.element = element;
+    event.mounted = true;
   }
 
   element.removeAttribute(EVENT_ATTRIBUTE);
@@ -73,6 +76,8 @@ const checkByInjectableNests = (element: HTMLElement, nests: TemplateInjectableN
   }
 
   element.replaceWith(fragment);
+
+  nest.mounted = true;
 };
 
 export const checkByInjectableParams = (

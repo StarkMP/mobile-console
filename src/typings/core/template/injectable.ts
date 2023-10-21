@@ -4,6 +4,7 @@ import { TemplateContext, TemplateInstance } from ".";
 
 export type TemplateInjectableDefaultParams = {
   id: string;
+  mounted: boolean;
 };
 
 export type TemplateInjectableReference = TemplateInjectableDefaultParams & {
