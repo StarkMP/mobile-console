@@ -43,7 +43,7 @@ export const createTemplate =
 
     const addEvent = (name: string, fn: () => void): TemplateInjectableEvent => {
       const eventId = uuidv4();
-      const eventObj = { id: eventId, mounted: false, element, name, fn };
+      const eventObj = { id: eventId, mounted: false, element: null, name, fn };
 
       events.push(eventObj);
 

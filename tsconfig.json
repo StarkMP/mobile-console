@@ -15,8 +15,6 @@
     "noEmit": true,
     "typeRoots": ["./node_modules/@types"],
     "baseUrl": ".",
-    "declaration": true,
-    "declarationDir": "dist",
     "paths": {
       "@core/*": ["./src/core/*"],
       "@core": ["./src/core"],
@@ -27,5 +25,5 @@
     }
   },
   "exclude": ["node_modules", "__tests__", "dist"],
-  "include": ["./src/**/*", "./src/**/*.json", "./example/**/*", "./tailwind.config.js", "./postcss.config.js", "./tools/**/*.js"]
+  "include": ["src", "vite.config.ts", "example", "postcss.config.js", "tailwind.config.js"]
 }
