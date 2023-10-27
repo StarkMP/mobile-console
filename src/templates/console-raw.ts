@@ -31,13 +31,13 @@ export const ConsoleRaw = createTemplate<ConsoleRawProps>(() => {
     const icon = consoleTypeIcon[type];
 
     return `
-      <div class="text-xs px-2 py-1 flex items-start ${consoleTypeClassname[type]} border-b">
+      <div class="text-xs px-2 py-1 flex items-start ${consoleTypeClassname[type]} border-b w-full">
         ${
           icon
             ? `<span class="w-3 h-3 mr-[5px] translate-y-[2px] overflow-hidden flex-[0_0_auto]">${icon}</span>`
             : ""
         }
-        <div>
+        <div class="w-full break-words">
           ${content}
         </div>
       </div>
