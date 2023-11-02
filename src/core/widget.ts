@@ -1,11 +1,19 @@
 import { initConsoleObserver } from "@core/console";
 import { Console, WidgetButton } from "@templates";
-import { WidgetConfig } from "@typings/core/widget";
+import { MobileConsoleWidget, MobileConsoleWidgetConfig } from "@typings/core/widget";
 
 import widgetStyles from "../styles.css?inline";
 
-export const initMobileConsoleWidget = (config: WidgetConfig = {}): void => {
-  const { parentElement = document.body } = config;
+let isMobileConsoleWidgetInitialized = false;
+
+export const initMobileConsoleWidget = (
+  config: MobileConsoleWidgetConfig = {}
+): MobileConsoleWidget => {
+  if (isMobileConsoleWidgetInitialized) {
+    throw new Error("Mobile Console Widget is already initialized");
+  }
+
+  const { parentElement = document.body, align = "right-bottom" } = config;
   const consoleObserver = initConsoleObserver();
 
   const openConsole = (): void => {
@@ -21,7 +29,7 @@ export const initMobileConsoleWidget = (config: WidgetConfig = {}): void => {
     observer: consoleObserver,
     onClose: closeConsole,
   });
-  const btnTemplate = WidgetButton({ onClick: openConsole });
+  const btnTemplate = WidgetButton({ align, onClick: openConsole });
 
   const wrapper = document.createElement("div");
   const styles = document.createElement("style");
@@ -37,4 +45,8 @@ export const initMobileConsoleWidget = (config: WidgetConfig = {}): void => {
   shadowRoot.appendChild(styles);
   shadowRoot.appendChild(consoleTemplate.context().element);
   shadowRoot.appendChild(btnTemplate.context().element);
+
+  isMobileConsoleWidgetInitialized = true;
+
+  return {};
 };
