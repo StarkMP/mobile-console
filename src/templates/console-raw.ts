@@ -1,7 +1,8 @@
 import { createTemplate } from "@core/template";
+import { injectEvent } from "@core/template/injectable";
 import { ConsoleItem, ConsoleType } from "@typings/core/console";
 
-type ConsoleRawProps = ConsoleItem;
+type ConsoleRawProps = ConsoleItem & { isExpanded?: boolean };
 
 const consoleTypeClassname: { [key in ConsoleType]: string } = {
   [ConsoleType.Error]: "bg-console-background-error text-console-error border-console-border-error",
@@ -26,19 +27,44 @@ const consoleTypeIcon: { [key in ConsoleType]: string } = {
   [ConsoleType.Info]: "",
 };
 
-export const ConsoleRaw = createTemplate<ConsoleRawProps>(() => {
-  return ({ type, content }): string => {
+const maxLength = 300;
+
+export const ConsoleRaw = createTemplate<ConsoleRawProps>(({ initialProps, context, addEvent }) => {
+  const { content } = initialProps;
+
+  const onClick = addEvent("click", () => {
+    navigator.clipboard.writeText(content);
+  });
+
+  const onCollapseLargeString = addEvent("click", (e) => {
+    e.stopPropagation();
+
+    context().update({ isExpanded: true });
+  });
+
+  return ({ type, content, isExpanded }): string => {
     const icon = consoleTypeIcon[type];
+    const isLargeString = content.length > maxLength;
 
     return `
-      <div class="text-xs px-2 py-1 flex items-start ${consoleTypeClassname[type]} border-b w-full">
+      <div ${injectEvent(onClick)} class="text-xs px-2 py-1 flex items-start mb-1 last:mb-0 ${
+      consoleTypeClassname[type]
+    } w-full rounded-md">
         ${
           icon
             ? `<span class="w-3 h-3 mr-[5px] translate-y-[2px] overflow-hidden flex-[0_0_auto]">${icon}</span>`
             : ""
         }
         <div class="w-full break-words">
-          ${content}
+          ${
+            isLargeString && !isExpanded
+              ? `${content.slice(0, maxLength - 1)}...<button ${injectEvent(
+                  onCollapseLargeString
+                )} class="bg-slate-100 whitespace-nowrap px-2 py-[2px] rounded-md">Show more (${String(
+                  content.length / 1000
+                )} kB)</button>`
+              : content
+          }
         </div>
       </div>
     `;

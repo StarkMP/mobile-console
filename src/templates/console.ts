@@ -69,7 +69,7 @@ export const Console = createTemplate<ConsoleProps>(
         </div>
         <div ${injectRef(
           scrollAreaRef
-        )} class="w-full h-full flex flex-col overflow-auto [overflow-anchor:none]">${injectNest(
+        )} class="w-full h-full flex flex-col overflow-auto [overflow-anchor:none] p-1">${injectNest(
       list
     )}</div>
       </div>
