@@ -13,7 +13,7 @@ export type TemplateInjectableReference = TemplateInjectableDefaultParams & {
 
 export type TemplateInjectableEvent = TemplateInjectableDefaultParams & {
   name: string;
-  fn: () => void;
+  fn: (event: any) => void;
   element: HTMLElement | null;
 };
 

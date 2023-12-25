@@ -27,6 +27,7 @@ export const createTemplate =
     const references: TemplateInjectableReference[] = [];
     const events: TemplateInjectableEvent[] = [];
     const nests: TemplateInjectableNest[] = [];
+    const ctx: TemplateContext<T> = {} as TemplateContext<T>;
 
     let onMountCallback: (() => void) | (() => () => void) | undefined;
     let onUnmountCallback: (() => void) | undefined;
@@ -41,7 +42,7 @@ export const createTemplate =
       return refObj;
     };
 
-    const addEvent = (name: string, fn: () => void): TemplateInjectableEvent => {
+    const addEvent = (name: string, fn: (e: any) => void): TemplateInjectableEvent => {
       const eventId = uuidv4();
       const eventObj = { id: eventId, mounted: false, element: null, name, fn };
 
@@ -70,7 +71,7 @@ export const createTemplate =
           // of this nest in the DOM
           if (templatesArrayLength > 0) {
             const list = nest.list();
-            const lastLoadedElement = list[list.length - 2].element;
+            const lastLoadedElement = list[templatesArrayLength - 1].element;
 
             lastLoadedElement.insertAdjacentElement("afterend", template.context().element);
 
@@ -111,6 +112,7 @@ export const createTemplate =
 
     const renderStringHTML = callback({
       initialProps,
+      context: () => ctx,
       addRef,
       addEvent,
       addNest,
@@ -160,19 +162,10 @@ export const createTemplate =
         return;
       }
 
-      onUpdateCallback(nextProps, prevProps);
+      if (onUpdateCallback) {
+        onUpdateCallback(nextProps, prevProps);
+      }
     };
-
-    const ctx: TemplateContext<T> = {
-      id,
-      element,
-      props: initialProps,
-      update,
-    };
-
-    if (onMountCallback) {
-      onUnmountCallback = onMountCallback() as TemplateOnUnmount | undefined;
-    }
 
     const remove = (): void => {
       if (onUnmountCallback) {
@@ -190,6 +183,16 @@ export const createTemplate =
       ctx.element.remove();
     };
 
+    // initial context
+    ctx.id = id;
+    ctx.element = element;
+    ctx.props = initialProps;
+    ctx.update = update;
+
+    if (onMountCallback) {
+      onUnmountCallback = onMountCallback() as TemplateOnUnmount | undefined;
+    }
+
     return {
       context: () => Object.assign(ctx, {}),
       remove,
@@ -201,11 +204,11 @@ const mapChildren = (element: HTMLElement, injectableParams: InjectableParams): 
   for (const child of element.children) {
     checkByInjectableParams(child as HTMLElement, injectableParams);
 
-    const innerHTML = child.innerHTML;
+    // const innerHTML = child.innerHTML;
 
-    if (!innerHTML) continue;
+    // if (!innerHTML) continue;
 
-    child.innerHTML = innerHTML.trim();
+    // child.innerHTML = innerHTML.trim();
 
     if (child.children.length > 0) {
       mapChildren(child as HTMLElement, injectableParams);

@@ -27,9 +27,9 @@ export type TemplateUpdateOption<T> = (updatedProps?: Partial<T>, isQuiet?: bool
 
 export type TemplateCallback<T extends { [key: string]: unknown } = {}> = (params: {
   initialProps: T;
-  // context: () => TemplateContext<T>;
+  context: () => TemplateContext<T>;
   addRef: () => TemplateInjectableReference;
-  addEvent: (name: string, fn: () => void) => TemplateInjectableEvent;
+  addEvent: (name: string, fn: (event: any) => void) => TemplateInjectableEvent;
   addNest: (templates?: TemplateInstance<AnyObject>[]) => TemplateInjectableNest;
   onMount: TemplateOnMount;
   onUpdate: TemplateOnUpdate<T>;
